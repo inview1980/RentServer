@@ -1,0 +1,14 @@
+
+rootProject.name = 'RentServer'
+
+include 'HttpUtils'
+include 'InviewUtil'
+include 'my_manage_pojo'
+include 'ExcelUtil'
+include 'MyIFace'
+
+project(':HttpUtils').projectDir = new File(settingsDir, '../HttpUtils')
+project(':InviewUtil').projectDir = new File(settingsDir, '../InviewUtil')
+project(':my_manage_pojo').projectDir = new File(settingsDir, '../my_manage_pojo')
+project(':ExcelUtil').projectDir = new File(settingsDir, '../ExcelUtil')
+project(':MyIFace').projectDir = new File(settingsDir, '../MyIFace')

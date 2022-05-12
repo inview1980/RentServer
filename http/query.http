@@ -1,0 +1,8 @@
+GET http://localhost:8081/rent/getRoomOverview
+Accept: application/json
+
+###
+GET http://localhost:8081/rent/getRoomByCommunity?community=湖口社区
+Accept: application/json
+
+###
