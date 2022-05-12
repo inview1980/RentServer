@@ -49,29 +49,29 @@ class DBFileTest {
 
     @Test
     void readXls() throws IOException, ParseException, IllegalAccessException, InstantiationException {
-        InputStream is=new FileInputStream("2021-8-23(16_01).xlsx");
-//        List<RoomDetails> rds = ExcelUtils.readExcel(new FileInputStream("2021-8-23(16_01).xlsx"), RoomDetails.class);
+        InputStream is=new FileInputStream("F:\\server\\AndroidDB\\2021-8-23(16_01).xlsx");
+//        List<RoomDetails> rds = ExcelUtils.readExcel(new FileInputStream("F:\\server\\AndroidDB\\2021-8-23(16_01).xlsx"), RoomDetails.class);
 //        for (int i = 0; i < rds.size(); i++) {
 //            rds.get(i).setId(i+1);
 //        }
 //        assertTrue(DBFile.save(rds,pwd));
-//        is=new FileInputStream("2021-8-23(16_01).xlsx");
+//        is=new FileInputStream("F:\\server\\AndroidDB\\2021-8-23(16_01).xlsx");
         assertTrue(DBFile.save(ExcelUtils.readExcel(is, ShoppingRecord.class),pwd));
-        is=new FileInputStream("2021-8-23(16_01).xlsx");
+        is=new FileInputStream("F:\\server\\AndroidDB\\2021-8-23(16_01).xlsx");
         assertTrue(DBFile.save(ExcelUtils.readExcel(is, DebtRecord.class),pwd));
-        is=new FileInputStream("2021-8-23(16_01).xlsx");
+        is=new FileInputStream("F:\\server\\AndroidDB\\2021-8-23(16_01).xlsx");
         assertTrue(DBFile.save(ExcelUtils.readExcel(is, PersonDetails.class), pwd));
-        is=new FileInputStream("2021-8-23(16_01).xlsx");
+        is=new FileInputStream("F:\\server\\AndroidDB\\2021-8-23(16_01).xlsx");
         assertTrue(DBFile.save(ExcelUtils.readExcel(is, LivingExpenses.class), pwd));
-        is=new FileInputStream("2021-8-23(16_01).xlsx");
+        is=new FileInputStream("F:\\server\\AndroidDB\\2021-8-23(16_01).xlsx");
         assertTrue(DBFile.save(ExcelUtils.readExcel(is, PayProperty.class),pwd));
-        is=new FileInputStream("2021-8-23(16_01).xlsx");
+        is=new FileInputStream("F:\\server\\AndroidDB\\2021-8-23(16_01).xlsx");
         assertTrue(DBFile.save(ExcelUtils.readExcel(is, CarMaintenanceRecord.class),pwd));
-        is=new FileInputStream("2021-8-23(16_01).xlsx");
+        is=new FileInputStream("F:\\server\\AndroidDB\\2021-8-23(16_01).xlsx");
         assertTrue(DBFile.save(ExcelUtils.readExcel(is, RentalRecord.class), pwd));
-        is=new FileInputStream("2021-8-23(16_01).xlsx");
+        is=new FileInputStream("F:\\server\\AndroidDB\\2021-8-23(16_01).xlsx");
         assertTrue(DBFile.save(ExcelUtils.readExcel(is, UserItem.class), pwd));
-        is=new FileInputStream("2021-8-23(16_01).xlsx");
+        is=new FileInputStream("F:\\server\\AndroidDB\\2021-8-23(16_01).xlsx");
         assertTrue(DBFile.save(ExcelUtils.readExcel(is, FuelRecord.class),pwd));
     }
 
