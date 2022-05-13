@@ -1,10 +1,15 @@
-package com.inview.rentserver.iface;
+package com.inview.rentserver.base;
 
 import com.inview.rentserver.pojo.DataEnum;
 import person.inview.receiver.Receiver;
 
 import java.lang.reflect.ParameterizedType;
 
+/**
+ * 广播接收器基类
+ * @param <T> 取值范围为基础数据类，如 {@link pojo.RoomDetails}
+ * 且与枚举 {@link DataEnum}中的值对应，如枚举中无此值，相应的接收器将不会收到消息
+ */
 public abstract class ReceiveListenerBase<T> {
     private Class<T> clazz;
 
@@ -13,10 +18,10 @@ public abstract class ReceiveListenerBase<T> {
     }
 
     public boolean register(Receiver receiver){
-        if((DataEnum.getCode(clazz)& receiver.getDataCode())!=0){
+        if((DataEnum.getCode(clazz.getSimpleName())& receiver.getDataCode())!=0){
            return notice(receiver);
         }
-        return false;
+        return true;
     }
 
     public abstract boolean notice(Receiver receiver);

@@ -1,6 +1,7 @@
 package com.inview.rentserver.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.inview.rentserver.pojo.DataEnum;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,11 @@ import org.springframework.web.context.WebApplicationContext;
 import person.inview.receiver.Receiver;
 import person.inview.tools.RandomUtil;
 import person.inview.tools.StringCompress;
+import uk.co.jemos.podam.api.PodamFactory;
+import uk.co.jemos.podam.api.PodamFactoryImpl;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import java.util.HashMap;
+import java.util.Map;
 
 @SpringBootTest
 class UpdateControllerTest {
@@ -47,32 +51,52 @@ class UpdateControllerTest {
 
     @Test
     void testUpdateOrAdd() {
-        query("/updateOrAdd", "dataCode", new String[]{"0", "1", "11", "111"});
+        get("getRecordByID", "id", "1");
+        PodamFactory factory = new PodamFactoryImpl();
+        Receiver re = factory.manufacturePojo(Receiver.class);
+        re.setDataCode(0L);
+        re.setDataCode(DataEnum.RentRecord.getCode());
+        re.setOpcode("changeRoomDeposit");
+        Map map = new HashMap();
+        map.put("recordID", 1);
+        map.put("value", 33.3);
+        re.setData(JSON.toJSONString(map));
+        query("/updateOrAdd", JSON.toJSONString(re));
+        get("getRecordByID", "id", "1");
     }
 
-    void query(String url, String param, String[] values) {
+    void query(String url, String... values) {
         try {
             //groupManager访问路径
             //param传入参数
             for (int i = 0; i < values.length; i++) {
+                System.out.println("--------------------------------------------------------");
                 MvcResult result = mock.perform(MockMvcRequestBuilders.post(url)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\n" +
-                                " \"opcode\":\"1\",\n" +
-                                " \"data\":\"1\",\n" +
-                                " \"other\":\"1\",\n" +
-                                " \"dataCode\":\"" + values[i] + "\"\n" +
-                                "}"
-                        )
+                        .content(values[i])
                         .accept(MediaType.APPLICATION_JSON))
                         .andReturn();
-//                        .param("opcode","1")
-//                        .param("data","1")
-//                        .param("other","1")
-//                        .param(param, values[i])).andReturn();
                 MockHttpServletResponse response = result.getResponse();
                 String content = response.getContentAsString();
+                System.out.println("地址[" + url + "]，值[" + values[i] + "]");
+                System.out.println(content);
                 System.out.println("--------------------------------------------------------");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    void get(String url, String param, String... values) {
+        try {
+            //groupManager访问路径
+            //param传入参数
+            for (int i = 0; i < values.length; i++) {
+                System.out.println("--------------------------------------------------------");
+                MvcResult result = mock.perform(MockMvcRequestBuilders.get("/rent/" + url)
+                        .param(param, values[i])).andReturn();
+                MockHttpServletResponse response = result.getResponse();
+                String content = response.getContentAsString();
                 System.out.println("参数[" + param + "]，值[" + values[i] + "]");
                 System.out.println(content);
                 System.out.println("--------------------------------------------------------");

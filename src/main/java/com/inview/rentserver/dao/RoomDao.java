@@ -1,7 +1,6 @@
 package com.inview.rentserver.dao;
 
-import com.inview.rentserver.iface.DBBase;
-import jdk.nashorn.internal.ir.ReturnNode;
+import com.inview.rentserver.base.DBBase;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

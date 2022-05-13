@@ -16,12 +16,12 @@ public enum DataEnum {
     FuelRecord(1L << 2, pojo.FuelRecord.class);
 
 
-    private final long code;
+    @Getter private final long code;
     private final Class<?> clazz;
 
-    public static long getCode(Class<?> clazz) {
+    public static long getCode(String clazzName) {
         for (DataEnum value : DataEnum.values()) {
-            if(value.clazz.equals(clazz))
+            if(value.clazz.getSimpleName().equals(clazzName))
                 return value.code;
         }
         return 0L;

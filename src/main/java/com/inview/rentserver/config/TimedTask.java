@@ -1,6 +1,6 @@
 package com.inview.rentserver.config;
 
-import com.inview.rentserver.iface.DBBase;
+import com.inview.rentserver.base.DBBase;
 import com.inview.rentserver.tool.SpringBeanUtil;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Async;
@@ -9,7 +9,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**

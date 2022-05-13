@@ -1,14 +1,10 @@
 package com.inview.rentserver.dao;
 
-import com.inview.rentserver.iface.DBBase;
+import com.inview.rentserver.base.DBBase;
 import lombok.NonNull;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import person.inview.tools.StrUtil;
 import pojo.RentalRecord;
-import pojo.RoomDetails;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

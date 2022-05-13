@@ -1,6 +1,6 @@
 package com.inview.rentserver.event;
 
-import com.inview.rentserver.iface.ReceiveListenerBase;
+import com.inview.rentserver.base.ReceiveListenerBase;
 import person.inview.receiver.Receiver;
 import com.inview.rentserver.tool.SpringBeanUtil;
 import lombok.extern.slf4j.Slf4j;

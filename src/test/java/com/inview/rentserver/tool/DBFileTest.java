@@ -1,23 +1,19 @@
 package com.inview.rentserver.tool;
 
-import com.inview.rentserver.dao.RoomDao;
 import org.junit.jupiter.api.Test;
 import person.inview.tool.ExcelUtils;
-import person.inview.tools.RandomUtil;
 import pojo.*;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
-import uk.co.jemos.podam.api.PodamUtils;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DBFileTest {
     private String pwd = "YW420102zxcvbnm,.asdfghjkl;";
@@ -37,7 +33,7 @@ class DBFileTest {
     void read() {
 //        System.out.println(DBFile.read(RoomDetails.class,pwd).get(2));
 //        System.out.println(DBFile.read(ShoppingRecord.class,pwd).get(2));
-        System.out.println(DBFile.read(DebtRecord.class,pwd).get(2));
+//        System.out.println(DBFile.read(DebtRecord.class,pwd).get(2));
 //        System.out.println(DBFile.read(PersonDetails.class,pwd).get(2));
 //        System.out.println(DBFile.read(LivingExpenses.class,pwd).get(2));
 //        System.out.println(DBFile.read(PayProperty.class,pwd).get(2));

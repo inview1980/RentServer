@@ -2,6 +2,7 @@ package com.inview.rentserver.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.inview.rentserver.dao.PayPropertyDao;
+import com.inview.rentserver.dao.RentalRecordDao;
 import com.inview.rentserver.dao.RoomDao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,7 @@ import java.util.Optional;
 public class RoomOverviewController {
     private final RoomDao roomDao;
     private final PayPropertyDao payPropertyDao;
+    private final RentalRecordDao rentalRecordDao;
 
     @GetMapping("/getRoomOverview")
     Result getRoomOverview() {
@@ -84,9 +86,14 @@ public class RoomOverviewController {
     @GetMapping("/getRoomPropertyPaymentStatus")
     Result getRoomPropertyPaymentStatus(String roomNumber) {
         //获取所有指定房间号的物业缴费记录
-        if(StrUtil.hasBlank(roomNumber))
+        if (StrUtil.hasBlank(roomNumber))
             return Result.Error(WebResultEnum.ParameterError.getCode(), "房间号不能为空");
         List<PayProperty> proLst = payPropertyDao.findByRoomNumber(roomNumber);
         return Result.Ok("getRoomPropertyPaymentStatus", roomNumber, proLst);
+    }
+
+    @GetMapping("/getRecordByID")
+    Result getRecordByID(int id){
+        return Result.Ok("getRecordByID", rentalRecordDao.findByID(id));
     }
 }

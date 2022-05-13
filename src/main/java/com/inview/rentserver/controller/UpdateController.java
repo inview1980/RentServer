@@ -22,6 +22,9 @@ public class UpdateController {
 //        return Result.Ok();
 //    }
 
+    /**
+     * 此接口为修改数据的唯一接口，收到指令后，将根据{@link Receiver}类的dataCode字段，通知相应的接收器处理消息
+     */
     @PostMapping("/updateOrAdd")
     Result updateOrAdd(@RequestBody Receiver receiver) {
         if(modifyFactory.notice(receiver)){

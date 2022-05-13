@@ -1,10 +1,9 @@
 package com.inview.rentserver.dao;
 
-import com.inview.rentserver.iface.DBBase;
+import com.inview.rentserver.base.DBBase;
 import org.springframework.stereotype.Component;
 import pojo.PayProperty;
 
-import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
