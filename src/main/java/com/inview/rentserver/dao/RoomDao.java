@@ -1,12 +1,15 @@
 package com.inview.rentserver.dao;
 
 import com.inview.rentserver.iface.DBBase;
+import jdk.nashorn.internal.ir.ReturnNode;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import person.inview.receiver.ToRentRecord;
 import person.inview.receiver.ToRoomByCommunity;
 import person.inview.tools.StrUtil;
+import pojo.PersonDetails;
 import pojo.RentalRecord;
 import pojo.RoomDetails;
 import pojo.show.ToRoomAllInfo;
@@ -25,12 +28,10 @@ public class RoomDao extends DBBase<RoomDetails> {
 
     /**
      * 获取小区名、小区内房间数量、小区内房间总面积
-     *
-     * @return
      */
     public List<Map<String, String>> getRoomOverview() {
         List<Map<String, String>> result = new ArrayList<>();
-        getDB().stream().map(RoomDetails::getCommunityName).distinct().forEachOrdered(comm -> {
+        getUndeleteRooms().stream().map(RoomDetails::getCommunityName).distinct().forEachOrdered(comm -> {
             Map<String, String> map = new HashMap<>();
             map.put("community", comm);
             List<RoomDetails> tmp = getDB().stream().filter(room -> comm.equals(room.getCommunityName())).collect(Collectors.toList());
@@ -52,7 +53,7 @@ public class RoomDao extends DBBase<RoomDetails> {
     public List<ToRoomByCommunity> getRoomByCommunity(String community) {
         List<ToRoomByCommunity> result = new ArrayList<>();
         if (StrUtil.hasBlank(community) || "全部".equals(community)) {
-            for (RoomDetails room : getDB()) {
+            for (RoomDetails room : getUndeleteRooms()) {
                 putRoomByCommunityData(result, room);
             }
         } else {
@@ -80,6 +81,7 @@ public class RoomDao extends DBBase<RoomDetails> {
 
     /**
      * 获取指定房间ID的所有信息，包括房间信息、当前的出租信息、当前的租客信息
+     *
      * @param roomID 房间的ID
      * @return {@link ToRoomAllInfo}
      */
@@ -104,5 +106,82 @@ public class RoomDao extends DBBase<RoomDetails> {
             }
         }
         return null;
+    }
+
+    /**
+     * 获取指定房间所有出租记录，包括记录ID，租户信息、开始及结束日期
+     *
+     * @param roomID 房间ID
+     * @return
+     */
+    public ToRentRecord getRentRecord(int roomID) {
+        RoomDetails roomDetails = findByID(roomID);
+        ToRentRecord toRentRecord = null;
+        if (roomDetails != null) {
+            toRentRecord = new ToRentRecord(roomDetails.getId(), roomDetails.getRoomNumber(), roomDetails.getRoomArea());
+            for (RentalRecord record : recordDao.findListByRoomNumber(roomDetails.getRoomNumber())) {
+                ToRentRecord.RentDate date = new ToRentRecord.RentDate();
+                Optional.ofNullable(personDao.findByID(record.getManID())).ifPresent(person -> {
+                    date.setPersonName(person.getName());
+                    date.setManID(person.getPrimary_id());
+                });
+                date.setRecordID(record.getPrimary_id());
+                date.setStartDate(record.getStartDate());
+                date.setEndDate(record.getStartDate().plusMonths(record.getPayMonth()).plusDays(-1));
+                toRentRecord.getRecord().add(date);
+            }
+        }
+        return toRentRecord;
+    }
+
+    public PersonDetails getPersonByRoom(int roomID) {
+        RoomDetails rd = findByID(roomID);
+        if (rd == null || rd.getRecordId() == 0)
+            return null;
+        RentalRecord rr = recordDao.findByID(rd.getRecordId());
+        if (rr == null || rr.getManID() == 0) {
+            return null;
+        }
+        return personDao.findByID(rr.getManID());
+    }
+
+    /**
+     * 获取指定租房记录ID的所有信息，包括房间信息、当前的出租信息、当前的租客信息
+     *
+     * @param recordID 租房记录ID
+     */
+    public ToRoomAllInfo getRoomDetailsByRecord(int recordID) {
+        ToRoomAllInfo all = null;
+        RentalRecord rr = recordDao.findByID(recordID);
+        if (rr != null && StrUtil.isNotBlank(rr.getRoomNumber())) {
+            all = new ToRoomAllInfo();
+            all.setRentalRecord(rr);
+            all.setRoomDetails(findByRoomNumber(rr.getRoomNumber()));
+            all.setPersonDetails(personDao.findByID(rr.getManID()));
+        }
+        return all;
+    }
+
+    public RoomDetails findByRoomNumber(@NonNull String roomNumber) {
+        for (RoomDetails room : getDB()) {
+            if (roomNumber.equals(room.getRoomNumber())) {
+                return room;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 获取标记为未删除的所有房源
+     */
+    public List<RoomDetails> getUndeleteRooms() {
+        return getDB().stream().filter(rd -> !rd.isDelete()).collect(Collectors.toList());
+    }
+
+    /**
+     * 获取标记为删除的所有房源
+     */
+    public List<RoomDetails> getDeleteRooms() {
+        return getDB().stream().filter(RoomDetails::isDelete).collect(Collectors.toList());
     }
 }

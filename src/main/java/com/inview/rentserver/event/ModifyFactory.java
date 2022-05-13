@@ -1,7 +1,7 @@
 package com.inview.rentserver.event;
 
+import com.inview.rentserver.iface.ReceiveListenerBase;
 import person.inview.receiver.Receiver;
-import com.inview.rentserver.iface.ReceiveListener;
 import com.inview.rentserver.tool.SpringBeanUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ import java.util.Collection;
 @Component
 @Slf4j
 public class ModifyFactory {
-    private static Collection<ReceiveListener> receiveList = null;
+    private static Collection<ReceiveListenerBase> receiveList = null;
     private static final Object object = new Object();
 
     /**
@@ -26,7 +26,7 @@ public class ModifyFactory {
             initListener();
         }
         boolean y = true;
-        for (ReceiveListener listener : receiveList) {
+        for (ReceiveListenerBase listener : receiveList) {
             if (!listener.register(receiver)) {
                 y = false;
             }
@@ -39,7 +39,7 @@ public class ModifyFactory {
      */
     private void initListener() {
         synchronized (ModifyFactory.object) {
-            ModifyFactory.receiveList = SpringBeanUtil.getApplicationContext().getBeansOfType(ReceiveListener.class).values();
+            ModifyFactory.receiveList = SpringBeanUtil.getApplicationContext().getBeansOfType(ReceiveListenerBase.class).values();
         }
         log.info("获取所有实现ReceiveListener接口的Bean，共计[{}]",ModifyFactory.receiveList.size());
     }

@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import person.inview.tools.RandomUtil;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,6 +23,7 @@ class RoomOverviewControllerTest {
     MockMvc mock;
     @Autowired
     WebApplicationContext webApplicationContext;
+    String randomNum = String.valueOf(RandomUtil.randomInt(5));
 
     @BeforeEach
     public void init() {
@@ -30,43 +32,63 @@ class RoomOverviewControllerTest {
 
     @Test
     void getRoomList() throws Exception {
-        //groupManager访问路径
-        //param传入参数
-        MvcResult result = mock.perform(MockMvcRequestBuilders.get("/rent/getRoomByCommunity")
-                .param("community", "")).andReturn();
-        MockHttpServletResponse response = result.getResponse();
-        String content = response.getContentAsString();
-        System.out.println(content);
-
-        result = mock.perform(MockMvcRequestBuilders.get("/rent/getRoomByCommunity")
-                .param("community", "湖口社区")).andReturn();
-         response = result.getResponse();
-         content = response.getContentAsString();
-        System.out.println(content);
+//        //groupManager访问路径
+//        //param传入参数
+//        MvcResult result = mock.perform(MockMvcRequestBuilders.get("/rent/getRoomByCommunity")
+//                .param("community", "")).andReturn();
+//        MockHttpServletResponse response = result.getResponse();
+//        String content = response.getContentAsString();
+//        System.out.println(content);
+//
+//        result = mock.perform(MockMvcRequestBuilders.get("/rent/getRoomByCommunity")
+//                .param("community", "湖口社区")).andReturn();
+//        response = result.getResponse();
+//        content = response.getContentAsString();
+//        System.out.println(content);
+        query("getRoomByCommunity", "community", new String[]{"", "community", "湖口社区"});
     }
 
     @Test
     void getRoomDetails() throws Exception {
-        //groupManager访问路径
-        //param传入参数
-        MvcResult result = mock.perform(MockMvcRequestBuilders.get("/rent/getRoomDetails")
-                .param("roomID", "2")).andReturn();
-        MockHttpServletResponse response = result.getResponse();
-        String content = response.getContentAsString();
-        System.out.println(content);
-
-        result = mock.perform(MockMvcRequestBuilders.get("/rent/getRoomDetails")
-                .param("roomID", "0")).andReturn();
-         response = result.getResponse();
-         content = response.getContentAsString();
-        System.out.println(content);
+        query("getRoomDetails", "roomID", new String[]{randomNum, "0", "110"});
     }
 
     @Test
     void getRentRecord() {
+        query("getRentRecord", "roomID", new String[]{randomNum, "0", "110"});
     }
 
     @Test
     void getPersonDetails() {
+        query("getPersonByRoom", "roomID", new String[]{randomNum, "0", "110"});
+    }
+
+    @Test
+    void getRoomDetailsByRecord() {
+        query("getRoomDetailsByRecord", "recordID", new String[]{randomNum, "0", "1110"});
+    }
+
+    @Test
+    void getRoomPropertyPaymentStatus() {
+        query("getRoomPropertyPaymentStatus", "roomNumber", new String[]{"7-1-801", null, "", "1110"});
+    }
+
+    void query(String url, String param, String[] values) {
+        try {
+            //groupManager访问路径
+            //param传入参数
+            for (int i = 0; i < values.length; i++) {
+                MvcResult result = mock.perform(MockMvcRequestBuilders.get("/rent/" + url)
+                        .param(param, values[i])).andReturn();
+                MockHttpServletResponse response = result.getResponse();
+                String content = response.getContentAsString();
+                System.out.println("--------------------------------------------------------");
+                System.out.println("参数[" + param + "]，值[" + values[i] + "]");
+                System.out.println(content);
+                System.out.println("--------------------------------------------------------");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
