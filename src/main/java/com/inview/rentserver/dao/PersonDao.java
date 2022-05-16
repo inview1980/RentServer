@@ -3,6 +3,7 @@ package com.inview.rentserver.dao;
 import com.inview.rentserver.base.DBBase;
 import org.springframework.stereotype.Component;
 import pojo.PersonDetails;
+import pojo.RoomDetails;
 
 @Component
 public class PersonDao extends DBBase<PersonDetails> {
@@ -15,4 +16,5 @@ public class PersonDao extends DBBase<PersonDetails> {
         }
         return null;
     }
+
 }

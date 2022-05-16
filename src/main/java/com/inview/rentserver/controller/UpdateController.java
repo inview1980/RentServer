@@ -1,5 +1,6 @@
 package com.inview.rentserver.controller;
 
+import com.inview.rentserver.config.TimedTask;
 import com.inview.rentserver.event.ModifyFactory;
 import person.inview.receiver.Receiver;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import person.inview.receiver.Result;
 import person.inview.receiver.WebResultEnum;
+
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 @RestController
 @Slf4j
@@ -27,10 +31,16 @@ public class UpdateController {
      */
     @PostMapping("/updateOrAdd")
     Result updateOrAdd(@RequestBody Receiver receiver) {
-        if(modifyFactory.notice(receiver)){
+        if (modifyFactory.notice(receiver)) {
             return Result.Ok();
-        }else{
+        } else {
             return Result.Error(WebResultEnum.Error);
         }
+    }
+
+    @GetMapping("/DBBackup")
+    Result DBBackup() throws IOException, InvocationTargetException, IllegalAccessException {
+        TimedTask.backupDB();
+        return Result.Ok();
     }
 }

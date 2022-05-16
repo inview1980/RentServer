@@ -15,7 +15,7 @@ import java.time.format.DateTimeFormatter;
 @Order(20)
 @Slf4j
 public class Init implements CommandLineRunner {
-    public static DateTimeFormatter LocalDateFormatter = DateTimeFormatter.ofPattern("yyyy-M-d");
+    private final DateTimeFormatter localDateFormatter = DateTimeFormatter.ofPattern("yyyy-M-d");
 
     @Value("${DB.Psd}")
     private String pwd;
@@ -28,6 +28,10 @@ public class Init implements CommandLineRunner {
         for (DBBase dbBase : d) {
             dbBase.read();
         }
-        log.info("已载入初始化类[{}]",this.getClass().getSimpleName());
+        log.info("已载入初始化类[{}]", this.getClass().getSimpleName());
+    }
+
+    public DateTimeFormatter LocalDateFormatter() {
+        return localDateFormatter;
     }
 }

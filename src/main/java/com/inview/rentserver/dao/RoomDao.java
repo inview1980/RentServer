@@ -63,7 +63,7 @@ public class RoomDao extends DBBase<RoomDetails> {
     }
 
     private void putRoomByCommunityData(List<ToRoomByCommunity> result, @NonNull RoomDetails room) {
-        ToRoomByCommunity rb = new ToRoomByCommunity(room.getId(), room.getRoomNumber(), room.getCommunityName(), room.getRoomArea());
+        ToRoomByCommunity rb = new ToRoomByCommunity(room.getPrimary_id(), room.getRoomNumber(), room.getCommunityName(), room.getRoomArea());
         if (room.getRecordId() != 0) {
             rb.setRecordID(room.getRecordId());
             Optional.ofNullable(recordDao.findByID(room.getRecordId())).ifPresent(rr -> {
@@ -100,7 +100,7 @@ public class RoomDao extends DBBase<RoomDetails> {
     public RoomDetails findByID(int id) {
         if (id == 0) return null;
         for (RoomDetails room : getDB()) {
-            if (room.getId() == id) {
+            if (room.getPrimary_id() == id) {
                 return room;
             }
         }
@@ -117,7 +117,7 @@ public class RoomDao extends DBBase<RoomDetails> {
         RoomDetails roomDetails = findByID(roomID);
         ToRentRecord toRentRecord = null;
         if (roomDetails != null) {
-            toRentRecord = new ToRentRecord(roomDetails.getId(), roomDetails.getRoomNumber(), roomDetails.getRoomArea());
+            toRentRecord = new ToRentRecord(roomDetails.getPrimary_id(), roomDetails.getRoomNumber(), roomDetails.getRoomArea());
             for (RentalRecord record : recordDao.findListByRoomNumber(roomDetails.getRoomNumber())) {
                 ToRentRecord.RentDate date = new ToRentRecord.RentDate();
                 Optional.ofNullable(personDao.findByID(record.getManID())).ifPresent(person -> {
@@ -183,4 +183,5 @@ public class RoomDao extends DBBase<RoomDetails> {
     public List<RoomDetails> getDeleteRooms() {
         return getDB().stream().filter(RoomDetails::isDelete).collect(Collectors.toList());
     }
+
 }

@@ -1,6 +1,7 @@
 package com.inview.rentserver.base;
 
 import com.inview.rentserver.tool.DBFile;
+import iface.IPrimaryID;
 import person.inview.tools.StrUtil;
 
 import java.lang.reflect.ParameterizedType;
@@ -8,12 +9,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class DBBase<T> {
+/**
+ * 数据文件基类
+ *
+ * @param <T> 取值范围为基础数据类，如 {@link pojo.RoomDetails}
+ *            且与枚举 {@link com.inview.rentserver.pojo.DataEnum}中的值对应，如枚举中无此值，相应的接收器将不会收到消息
+ */
+public abstract class DBBase<T extends IPrimaryID> {
     /**
      * 数据存在格式为：类名，列表，如：
      * Map <"RoomDetails", List<{@link pojo.RoomDetails}>>
      */
-    private final static Map<String, List<Object>> dbMap = new HashMap<>();
+    private final static Map<String, List> dbMap = new HashMap<>();
     /**
      * 数据库是否已修改的标志，格式为：类名，布尔值
      */
@@ -49,7 +56,7 @@ public abstract class DBBase<T> {
     public void read() {
         List<Object> lst = null;
         synchronized (lockMap) {
-            lst = DBFile.read((Class<Object>) clazz, pwd);
+            lst = DBFile.read((Class) clazz, pwd);
         }
         if (lst != null && lst.size() != 0) {
             dbMap.put(clazz.getSimpleName(), lst);
@@ -58,7 +65,11 @@ public abstract class DBBase<T> {
 
     public static void setDBPwd(String pwd) {
         if (StrUtil.isNotBlank(pwd)) {
-            DBBase.pwd=pwd;
+            DBBase.pwd = pwd;
         }
+    }
+
+    public  int getMaxID(){
+        return getDB().stream().mapToInt(IPrimaryID::getPrimary_id).max().orElse(0);
     }
 }

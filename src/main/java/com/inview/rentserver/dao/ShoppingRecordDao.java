@@ -7,4 +7,5 @@ import pojo.ShoppingRecord;
 @Component
 public class ShoppingRecordDao extends DBBase<ShoppingRecord> {
 
+
 }

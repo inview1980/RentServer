@@ -3,6 +3,7 @@ package com.inview.rentserver.dao;
 import com.inview.rentserver.base.DBBase;
 import org.springframework.stereotype.Component;
 import pojo.PayProperty;
+import pojo.RoomDetails;
 
 import java.util.Comparator;
 import java.util.List;
@@ -19,4 +20,5 @@ public class PayPropertyDao extends DBBase<PayProperty> {
                 .sorted(Comparator.comparing(PayProperty::getStartDate))
                 .collect(Collectors.toList());
     }
+
 }

@@ -65,6 +65,23 @@ class UpdateControllerTest {
         get("getRecordByID", "id", "1");
     }
 
+    @Test
+    void DBBackup(){
+        try {
+            //groupManager访问路径
+            //param传入参数
+                System.out.println("--------------------------------------------------------");
+                MvcResult result = mock.perform(MockMvcRequestBuilders.get("/DBBackup" )).andReturn();
+                MockHttpServletResponse response = result.getResponse();
+                String content = response.getContentAsString();
+                System.out.println("/DBBackup");
+                System.out.println(content);
+                System.out.println("--------------------------------------------------------");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     void query(String url, String... values) {
         try {
             //groupManager访问路径

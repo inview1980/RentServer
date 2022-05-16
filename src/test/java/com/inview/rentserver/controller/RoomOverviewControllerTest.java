@@ -23,7 +23,7 @@ class RoomOverviewControllerTest {
     MockMvc mock;
     @Autowired
     WebApplicationContext webApplicationContext;
-    String randomNum = String.valueOf(RandomUtil.randomInt(5));
+    String randomNum = String.valueOf(RandomUtil.randomInt(5)+1);
 
     @BeforeEach
     public void init() {
