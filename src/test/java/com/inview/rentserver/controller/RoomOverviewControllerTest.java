@@ -1,8 +1,10 @@
 package com.inview.rentserver.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.shadow.com.univocity.parsers.common.input.LineSeparatorDetector;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,7 +16,12 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.w3c.dom.stylesheets.LinkStyle;
+import person.inview.receiver.Result;
+import person.inview.receiver.ToRentalTotal;
 import person.inview.tools.RandomUtil;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -90,5 +97,19 @@ class RoomOverviewControllerTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    void getRentalTotal() throws Exception {
+        MvcResult result = mock.perform(MockMvcRequestBuilders.get("/rent/getRentalTotal" )).andReturn();
+        MockHttpServletResponse response = result.getResponse();
+        String content = response.getContentAsString();
+        Result rt = JSONObject.parseObject(content, Result.class);
+        assertNotNull(rt);
+        System.out.println(rt);
+
+        List<ToRentalTotal> rtt = rt.getList(ToRentalTotal.class);
+        assertNotNull(rtt);
+        rtt.forEach(System.out::println);
     }
 }

@@ -3,6 +3,7 @@ package com.inview.rentserver.config;
 import com.alibaba.fastjson.JSON;
 import com.inview.rentserver.http.TokenUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import person.inview.receiver.Result;
 import person.inview.receiver.WebResultEnum;
@@ -13,7 +14,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * 拦截请求头中是否含有字段userToken，并验证其是否有效，然后跳转
+ */
 @Slf4j
+@Component
 public class TokenFilter implements HandlerInterceptor {
 
     /**
@@ -31,7 +36,6 @@ public class TokenFilter implements HandlerInterceptor {
             outputStream.write(resultStr.getBytes(StandardCharsets.UTF_8));
             log.error("需要登录");
             return false;
-//            throw new MyException(HttpResultEnum.NeedLogin);
         }
     }
 }

@@ -1,11 +1,13 @@
 package com.inview.rentserver.dao;
 
 import com.inview.rentserver.base.DBBase;
+import com.inview.rentserver.config.Init;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import person.inview.receiver.ToRentRecord;
+import person.inview.receiver.ToRentalTotal;
 import person.inview.receiver.ToRoomByCommunity;
 import person.inview.tools.StrUtil;
 import pojo.PersonDetails;
@@ -184,4 +186,27 @@ public class RoomDao extends DBBase<RoomDetails> {
         return getDB().stream().filter(RoomDetails::isDelete).collect(Collectors.toList());
     }
 
+    /**
+     * 获取未删除的房间的id,房间号，小区、面积、月租金、月物业费
+     */
+    public List<ToRentalTotal> getRentalTotal() {
+        List<ToRentalTotal> result = new ArrayList<>();
+        for (RoomDetails room : getUndeleteRooms()) {
+            ToRentalTotal rt = new ToRentalTotal(room.getPrimary_id(), room.getRoomNumber(), room.getCommunityName(),
+                    room.getRoomArea(),room.getPropertyPrice());
+            RentalRecord rr = recordDao.findByID(room.getRecordId());
+            if (rr != null) {
+                rt.setMonthlyRent(rr.getMonthlyRent());
+            }
+            result.add(rt);
+        }
+        result.sort((o1,o2)-> Init.getChineseComparator(o1.getCommunity(),o2.getCommunity()));
+        //统计
+        ToRentalTotal rt=new ToRentalTotal();
+        rt.setCommunity("全部");
+        rt.setArea(result.stream().map(ToRentalTotal::getArea).reduce(BigDecimal::add).orElse(new BigDecimal(0)));
+        rt.setMonthlyRent(result.stream().map(ToRentalTotal::getMonthlyRent).reduce(BigDecimal::add).orElse(new BigDecimal(0)));
+        result.add(rt);
+        return result;
+    }
 }

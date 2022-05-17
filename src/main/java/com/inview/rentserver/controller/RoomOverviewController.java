@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import person.inview.receiver.Result;
+import person.inview.receiver.ToRentalTotal;
 import person.inview.receiver.ToRoomByCommunity;
 import person.inview.receiver.WebResultEnum;
 import person.inview.tools.StrUtil;
@@ -92,8 +93,10 @@ public class RoomOverviewController {
         return Result.Ok("getRoomPropertyPaymentStatus", roomNumber, proLst);
     }
 
-    @GetMapping("/getRecordByID")
-    Result getRecordByID(int id){
-        return Result.Ok("getRecordByID", rentalRecordDao.findByID(id));
+    @GetMapping("/getRentalTotal")
+    Result getRentalTotal() {
+        //获取未删除的房间的id,房间号，小区、面积、月租金、月物业费
+        List<ToRentalTotal> rt=roomDao.getRentalTotal();
+        return Result.Ok("getRentalTotal", rt);
     }
 }

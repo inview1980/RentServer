@@ -15,16 +15,29 @@ public class LoginDao {
     @Value("${DB.Psd}")
     private String pwd;
 
-    public Result getResult(String password,@NonNull String data) {
+    public Result login(String password, @NonNull String data) {
+        if (checkPwd(password, data))
+            return Result.Ok("login", "", TokenUtil.buildToken());
+        else
+            return Result.Error(WebResultEnum.PasswordError);
+    }
+
+    public Result changePwd(String password, String oldPwd, String newPwd) {
+        if (checkPwd(password, oldPwd)) {
+            String hmac = EncryptUtil.HmacSHA256(pwd, newPwd);
+            Init.setEncryptPassword(hmac);
+            return Result.Ok("changePwd","",null);
+        }
+        return Result.Error(WebResultEnum.PasswordError);
+    }
+
+    private boolean checkPwd(String password, @NonNull String data) {
         //解密
         BasicTextEncryptor encryptor = new BasicTextEncryptor();
         encryptor.setPassword(password);
         String str = encryptor.decrypt(data);
         //摘要加密后的字符串与系统已存的44位密钥比对
-        String hmacSHA256= EncryptUtil.HmacSHA256(pwd, str);
-        if(Init.getEncryptPassword().equals(hmacSHA256))
-            return Result.Ok("login", "", TokenUtil.buildToken());
-        else
-            return Result.Error(WebResultEnum.PasswordError);
+        String hmacSHA256 = EncryptUtil.HmacSHA256(pwd, str);
+        return Init.getEncryptPassword().equals(hmacSHA256);
     }
 }
