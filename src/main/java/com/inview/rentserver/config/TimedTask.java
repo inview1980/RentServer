@@ -1,6 +1,7 @@
 package com.inview.rentserver.config;
 
 import com.inview.rentserver.base.DBBase;
+import com.inview.rentserver.http.TokenUtil;
 import com.inview.rentserver.tool.SpringBeanUtil;
 import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
@@ -26,13 +27,12 @@ import java.util.List;
 @EnableAsync
 @Slf4j
 public class TimedTask {
-    private static List<DBBase> dbBases = new ArrayList<>();
+    private static final List<DBBase> dbBases = new ArrayList<>();
 
-    //间隔24小时，检查发送给用户的Token是否过期
-    @Scheduled(fixedRate = 1000 * 60 * 60 * 24)
-    void checkTokenOverdue() {
-//        tokenServer.checkTokenOverdue();
-
+    //间隔1小时，检查发送给用户的Token是否过期
+    @Scheduled(fixedRate = 1000 * 60 * 60)
+    void tokenOverdue() {
+        TokenUtil.cleanUserToken(Init.getTokenTimes());
     }
 
     /**
@@ -65,7 +65,8 @@ public class TimedTask {
         log.info("数据库备份到[{}]文件。", path);
     }
 
-    public static List<DBBase> getDbBases() {
+
+    private static List<DBBase> getDbBases() {
         if (dbBases.size() == 0) {
             dbBases.addAll(SpringBeanUtil.getApplicationContext().getBeansOfType(DBBase.class).values());
         }

@@ -36,6 +36,7 @@ dependencies {
             'org.springframework.boot:spring-boot-starter',
             'org.springframework.boot:spring-boot-starter-web',
             'com.alibaba:fastjson:1.2.72',
+            'org.jasypt:jasypt:1.9.3',                          //加密包
 
             project(":HttpUtils"),
             project(":InviewUtil"),

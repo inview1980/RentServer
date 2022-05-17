@@ -33,6 +33,9 @@ public abstract class DBBase<T extends IPrimaryID> {
         clazz = (Class<T>) ((ParameterizedType) this.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
     }
 
+    public Class<T> getParamClass(){
+        return clazz;
+    }
     public List<T> getDB() {
         return (List<T>) DBBase.dbMap.get(clazz.getSimpleName());
     }
@@ -71,5 +74,13 @@ public abstract class DBBase<T extends IPrimaryID> {
 
     public  int getMaxID(){
         return getDB().stream().mapToInt(IPrimaryID::getPrimary_id).max().orElse(0);
+    }
+
+    public T findByID(int id){
+        for (T t : getDB()) {
+            if(t.getPrimary_id()==id)
+                return t;
+        }
+        return null;
     }
 }

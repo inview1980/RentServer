@@ -19,7 +19,6 @@ public class FuelDBNotice extends ReceiveListenerBase<FuelRecord> {
 
     @Override
     public boolean notice(Receiver receiver) {
-        log.info("需修改的数据表：[{}]", DataEnum.FuelRecord.name());
         return true;
     }
 }

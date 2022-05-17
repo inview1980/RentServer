@@ -6,9 +6,22 @@ POST http://localhost:8081/updateOrAdd
 Content-Type: application/json
 
 {
-  "dataCode": 111,
+  "dataCode": "11",
   "opcode": "成功",
   "data": null,
+  "other": null
+}
+
+###
+
+POST http://localhost:8081/updateOrAdd
+Content-Type: application/json
+
+
+{
+  "data": "{\"room\":\"{\\\"communityName\\\":\\\"U41YWQ0VAs\\\",\\\"delete\\\":false,\\\"electricMeter\\\":\\\"Y4VeWwLq1a\\\",  \\\"primary_id\\\":2,\\\"propertyPrice\\\":326455331905,\\\"recordId\\\":736955220,\\\"roomArea\\\":5173032773,\\\"roomNumber\\\":\\\"HQTejeBsQS\\\",\\\"waterMeter\\\":\\\"nigUd6JUKU\\\"}\"}",
+  "dataCode": 1,
+  "opcode": "changeRoom",
   "other": null
 }
 

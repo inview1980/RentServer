@@ -25,7 +25,6 @@ public class RentRecordDBNotice extends ReceiveListenerBase<RentalRecord> {
 
     @Override
     public boolean notice(Receiver receiver) {
-        log.info("需修改的数据表：[{}]", DataEnum.RentRecord.name());
         switch (receiver.getOpcode()) {
             case "changeRoomDeposit"://修改押金
                 return changeRoomDeposit(receiver.getData());
