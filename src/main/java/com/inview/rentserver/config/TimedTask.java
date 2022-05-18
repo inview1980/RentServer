@@ -2,6 +2,7 @@ package com.inview.rentserver.config;
 
 import com.inview.rentserver.base.DBBase;
 import com.inview.rentserver.http.TokenUtil;
+import com.inview.rentserver.http.VerificationCodeUtil;
 import com.inview.rentserver.tool.SpringBeanUtil;
 import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +33,14 @@ public class TimedTask {
     //间隔1小时，检查发送给用户的Token是否过期
     @Scheduled(fixedRate = 1000 * 60 * 60)
     void tokenOverdue() {
-        TokenUtil.cleanUserToken(Init.getTokenTimes());
+        TokenUtil.cleanUserToken(StaticValues.TokenTimes);
+    }
+
+
+    //间隔5秒，检查发送给用户的VerificationCode是否过期
+    @Scheduled(fixedRate = 1000 * 60 * 60)
+    void verificationCodeOverdue() {
+        VerificationCodeUtil.clearVerificationCode(StaticValues.VerificationCodeTimes);
     }
 
     /**

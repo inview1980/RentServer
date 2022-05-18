@@ -1,6 +1,7 @@
 package com.inview.rentserver.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.inview.rentserver.dao.RoomDao;
 import com.inview.rentserver.pojo.DataEnum;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import org.springframework.web.context.WebApplicationContext;
 import person.inview.receiver.Receiver;
 import person.inview.tools.RandomUtil;
 import person.inview.tools.StringCompress;
+import pojo.RoomDetails;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
 
@@ -27,6 +29,8 @@ class UpdateControllerTest {
     MockMvc mock;
     @Autowired
     WebApplicationContext webApplicationContext;
+    @Autowired
+    RoomDao roomDao;
 
     @BeforeEach
     public void init() {
@@ -39,7 +43,6 @@ class UpdateControllerTest {
 
     @Test
     void compress() {
-
         String ss = RandomUtil.randomNumbers(1000);
         System.out.println(ss);
         System.out.println(ss.length());
@@ -54,7 +57,6 @@ class UpdateControllerTest {
         get("getRecordByID", "id", "1");
         PodamFactory factory = new PodamFactoryImpl();
         Receiver re = factory.manufacturePojo(Receiver.class);
-        re.setDataCode(0L);
         re.setDataCode(DataEnum.RentRecord.getCode());
         re.setOpcode("changeRoomDeposit");
         Map map = new HashMap();
@@ -63,6 +65,21 @@ class UpdateControllerTest {
         re.setData(JSON.toJSONString(map));
         query("/updateOrAdd", JSON.toJSONString(re));
         get("getRecordByID", "id", "1");
+    }
+
+    @Test
+    void roomUpdate(){
+        PodamFactory factory = new PodamFactoryImpl();
+        Receiver re = factory.manufacturePojo(Receiver.class);
+        re.setDataCode(DataEnum.RoomDetails.getCode());
+        re.setOpcode("changeRoomDetails");
+        RoomDetails room = factory.manufacturePojo(RoomDetails.class);
+        room.setPrimary_id(2);
+        Map map = new HashMap();
+        map.put(RoomDetails.class.getSimpleName(), room);
+        re.setData(JSON.toJSONString(map));
+        query("/updateOrAdd",JSON.toJSONString(re));
+        System.out.println(roomDao.findByID(2));
     }
 
     @Test

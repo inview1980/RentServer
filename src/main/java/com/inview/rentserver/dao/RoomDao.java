@@ -204,8 +204,10 @@ public class RoomDao extends DBBase<RoomDetails> {
         //统计
         ToRentalTotal rt=new ToRentalTotal();
         rt.setCommunity("全部");
-        rt.setArea(result.stream().map(ToRentalTotal::getArea).reduce(BigDecimal::add).orElse(new BigDecimal(0)));
-        rt.setMonthlyRent(result.stream().map(ToRentalTotal::getMonthlyRent).reduce(BigDecimal::add).orElse(new BigDecimal(0)));
+        rt.setArea(result.stream().map(ToRentalTotal::getArea).filter(Objects::nonNull)
+                .reduce(BigDecimal::add).orElse(new BigDecimal(0)));
+        rt.setMonthlyRent(result.stream().map(ToRentalTotal::getMonthlyRent).filter(Objects::nonNull)
+                .reduce(BigDecimal::add).orElse(new BigDecimal(0)));
         result.add(rt);
         return result;
     }

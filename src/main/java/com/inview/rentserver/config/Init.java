@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.text.Collator;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.Locale;
 import java.util.Properties;
 
@@ -26,19 +25,36 @@ public class Init implements CommandLineRunner {
     private static final DateTimeFormatter localDateFormatter = DateTimeFormatter.ofPattern("yyyy-M-d");
     @Getter
     private static String EncryptPassword = "";
+    private static final String ConfigFilename = "config.ini";
+
     /**
      * token的有效期为7天
      */
-    @Getter
-    private static int TokenTimes = 60 * 60 * 24 * 7;
-    private static final String ConfigFilename = "config.ini";
+    @Value("${Config.TokenTimes}")
+    private int tokenTimes;
+
+    /**
+     * VerificationCodeTimes的有效期为60秒
+     */
+    @Value("${Config.VerificationCodeTimes}")
+    private int verificationCodeTimes;
+
+    @Value("${Config.PasswordLength}")
+    private int passwordLength;
+
+    @Value("${Config.TokenLength}")
+    private int tokenLength;
+
+    @Value("${Config.VerificationCodeLength}")
+    private int verificationCodeLength;
 
     @Value("${DB.Psd}")
     private String pwd;
 
     @Override
     public void run(String... args) {
-        DBBase.setDBPwd(pwd);
+        setStaticValues();
+
         final Collection<DBBase> d = SpringBeanUtil.getApplicationContext().getBeansOfType(DBBase.class).values();
         for (DBBase dbBase : d) {
             dbBase.read();
@@ -48,25 +64,35 @@ public class Init implements CommandLineRunner {
         loadConfig();
     }
 
+    private void setStaticValues() {
+        StaticValues.VerificationCodeLength = this.verificationCodeLength;
+        StaticValues.TokenTimes = this.tokenTimes;
+        StaticValues.VerificationCodeTimes = this.verificationCodeTimes;
+        StaticValues.PasswordLength = this.passwordLength;
+        StaticValues.TokenLength = this.tokenLength;
+        DBBase.setDBPwd(pwd);
+    }
+
     private void loadConfig() {
         try {
             Properties pop = PropertyUtil.readProperty(ConfigFilename);
             Init.EncryptPassword = pop.getProperty("password", "");
-            Init.TokenTimes = Integer.parseInt(pop.getProperty("TokenTimes", "604800"));
         } catch (IOException e) {
             log.error("读取配置文件失败", e);
         }
     }
 
+    /**
+     * 设置登录的密码，此密码是经过HmacSHA256加密后的字符串，加密此密码的密码在配置文件中
+     */
     public static void setEncryptPassword(@NonNull String encryptPassword) {
-        EncryptPassword = encryptPassword;
+        Init.EncryptPassword = encryptPassword;
         saveConfig();
     }
 
     private static void saveConfig() {
         Properties pop = new Properties();
         pop.setProperty("password", Init.EncryptPassword);
-        pop.setProperty("TokenTimes", String.valueOf(Init.TokenTimes));
         try {
             PropertyUtil.writeProperty(Init.ConfigFilename, pop);
         } catch (IOException e) {
@@ -74,7 +100,7 @@ public class Init implements CommandLineRunner {
         }
     }
 
-    public static int getChineseComparator(String s1,String s2){
+    public static int getChineseComparator(String s1, String s2) {
         return Collator.getInstance(Locale.CHINESE).compare(s1, s2);
     }
 }

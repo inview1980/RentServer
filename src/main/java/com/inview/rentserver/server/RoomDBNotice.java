@@ -24,12 +24,7 @@ public class RoomDBNotice extends ReceiveListenerBase<RoomDetails> {
     @Override
     public boolean notice(Receiver receiver) {
         switch (receiver.getOpcode()) {
-            case "changeRoom":
-                Map map = JSONObject.parseObject(receiver.getData(), Map.class);
-                return updateOrAddPojo(map.get("room").toString());
-            case "deleteRoom":
-                int id = Integer.getInteger(receiver.getData(), 0);
-                return deleteByID(id);
+
             default:
                 return true;
         }

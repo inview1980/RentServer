@@ -16,7 +16,7 @@ public class WebConfig extends WebMvcConfigurationSupport {
 
     @Override
     protected void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(this.tokenFilter).addPathPatterns("/**").excludePathPatterns("/login");
+        registry.addInterceptor(this.tokenFilter).addPathPatterns("/**").excludePathPatterns("/login/**");
         super.addInterceptors(registry);
     }
 }

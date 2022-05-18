@@ -1,16 +1,19 @@
 package com.inview.rentserver.http;
 
+import com.inview.rentserver.config.Init;
+import com.inview.rentserver.config.StaticValues;
+import lombok.NonNull;
+import person.inview.receiver.Token;
 import person.inview.tools.RandomUtil;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 public class TokenUtil {
-    private static final Map<String, LocalDateTime> userTokenMap = new HashMap<>();
-    private static final int TokenLength=16;
+    private static final Map<String, Token> TOKEN_MAP=new HashMap<>(20);
 
     public static boolean checkToken(String userToken) {
-        return userTokenMap.containsKey(userToken);
+        return TOKEN_MAP.containsKey(userToken);
     }
 
     /**
@@ -18,12 +21,20 @@ public class TokenUtil {
      * @param second 单位秒
      */
     public static void cleanUserToken(int second) {
-        userTokenMap.entrySet().removeIf(entry -> entry.getValue().plusSeconds(second).isBefore(LocalDateTime.now()));
+        TOKEN_MAP.entrySet().removeIf(entry->entry.getValue().getCreatTime().plusSeconds(second).isBefore(LocalDateTime.now()));
     }
 
-    public static String buildToken(){
-        String token = RandomUtil.randomString(TokenLength);
-        userTokenMap.put(token, LocalDateTime.now());
+    public static Token buildToken(){
+        String tokenStr = RandomUtil.randomString(StaticValues.TokenLength);
+        Token token=new Token();
+        token.setToken(tokenStr);
+        token.setCreatTime(LocalDateTime.now());
+        token.setPwd(RandomUtil.randomString(StaticValues.PasswordLength));
+        TOKEN_MAP.put(tokenStr, token);
         return token;
+    }
+
+    public static Token getToken(@NonNull String tokenStr){
+        return TOKEN_MAP.getOrDefault(tokenStr, null);
     }
 }
