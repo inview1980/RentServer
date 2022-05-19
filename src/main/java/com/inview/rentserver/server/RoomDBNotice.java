@@ -33,11 +33,39 @@ public class RoomDBNotice extends ReceiveListenerBase<RoomDetails> {
         switch (receiver.getOpcode()) {
             case "changeRoomDelete":
                 return moveToDelete(receiver.getData());
+            case "notRented":
+                return notRented(receiver.getData());
             default:
                 return true;
         }
     }
 
+    /**
+     * 退租
+     *
+     * @param data 出租记录表的ID
+     */
+    private boolean notRented(String data) {
+        if (StrUtil.hasBlank(data)) throw new MyException(WebResultEnum.ParameterError);
+        try {
+            int rentID = Integer.parseInt(data);
+            RoomDetails room = roomDao.findByID(rentID);
+            if (room != null) {
+                room.setRecordId(0);
+                roomDao.DBChanged();
+                return true;
+            }
+            throw new MyException(WebResultEnum.ParameterError);
+        } catch (Exception e) {
+            throw new MyException(WebResultEnum.ParameterChangeError);
+        }
+    }
+
+    /**
+     * 设置指定房间是否处于“不可示”状态
+     *
+     * @param data Map的序列化字符串，包含key:roomID\value
+     */
     private boolean moveToDelete(String data) {
         if (StrUtil.hasBlank(data)) throw new MyException(WebResultEnum.ParameterError);
         try {

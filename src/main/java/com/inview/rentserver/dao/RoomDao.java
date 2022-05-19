@@ -6,6 +6,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import person.inview.receiver.ToContract;
 import person.inview.receiver.ToRentRecord;
 import person.inview.receiver.ToRentalTotal;
 import person.inview.receiver.ToRoomByCommunity;
@@ -193,16 +194,16 @@ public class RoomDao extends DBBase<RoomDetails> {
         List<ToRentalTotal> result = new ArrayList<>();
         for (RoomDetails room : getUndeleteRooms()) {
             ToRentalTotal rt = new ToRentalTotal(room.getPrimary_id(), room.getRoomNumber(), room.getCommunityName(),
-                    room.getRoomArea(),room.getPropertyPrice());
+                    room.getRoomArea(), room.getPropertyPrice());
             RentalRecord rr = recordDao.findByID(room.getRecordId());
             if (rr != null) {
                 rt.setMonthlyRent(rr.getMonthlyRent());
             }
             result.add(rt);
         }
-        result.sort((o1,o2)-> Init.getChineseComparator(o1.getCommunity(),o2.getCommunity()));
+        result.sort((o1, o2) -> Init.getChineseComparator(o1.getCommunity(), o2.getCommunity()));
         //统计
-        ToRentalTotal rt=new ToRentalTotal();
+        ToRentalTotal rt = new ToRentalTotal();
         rt.setCommunity("全部");
         rt.setArea(result.stream().map(ToRentalTotal::getArea).filter(Objects::nonNull)
                 .reduce(BigDecimal::add).orElse(new BigDecimal(0)));
@@ -210,5 +211,22 @@ public class RoomDao extends DBBase<RoomDetails> {
                 .reduce(BigDecimal::add).orElse(new BigDecimal(0)));
         result.add(rt);
         return result;
+    }
+
+    /**
+     * 获取当前房间的合同信息
+     */
+    public ToContract getContractByRoomID(int roomID) {
+        ToContract contract=null;
+        RoomDetails room = findByID(roomID);
+        if (room != null) {
+            contract = new ToContract(roomID, room.getCommunityName(), room.getRoomNumber(), room.getRoomArea());
+            RentalRecord rr = recordDao.findByID(room.getRecordId());
+            if (rr != null && rr.getContractSigningDate() != null) {
+                contract.setStartDate(rr.getContractSigningDate());
+                contract.setEndDate(rr.getContractSigningDate().plusMonths(rr.getContractMonth()).plusDays(-1));
+            }
+        }
+        return contract;
     }
 }

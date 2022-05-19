@@ -9,10 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import person.inview.receiver.Result;
-import person.inview.receiver.ToRentalTotal;
-import person.inview.receiver.ToRoomByCommunity;
-import person.inview.receiver.WebResultEnum;
+import person.inview.receiver.*;
 import person.inview.tools.StrUtil;
 import pojo.PayProperty;
 import pojo.PersonDetails;
@@ -30,7 +27,6 @@ import java.util.Optional;
 public class RoomOverviewController {
     private final RoomDao roomDao;
     private final PayPropertyDao payPropertyDao;
-    private final RentalRecordDao rentalRecordDao;
 
     @GetMapping("/getRoomOverview")
     Result getRoomOverview() {
@@ -98,5 +94,16 @@ public class RoomOverviewController {
         //获取未删除的房间的id,房间号，小区、面积、月租金、月物业费
         List<ToRentalTotal> rt=roomDao.getRentalTotal();
         return Result.Ok("getRentalTotal", rt);
+    }
+
+    /**
+     * 获取当前房间的合同信息
+     */
+    @GetMapping("/getContractByRoomID")
+    Result getContractByRoomID(int roomID){
+        if(roomID==0)
+            return Result.Error(WebResultEnum.ParameterError.getCode(), "房间ID不能为0");
+        ToContract contract = roomDao.getContractByRoomID(roomID);
+        return Result.Ok("getContractByRoomID", contract);
     }
 }

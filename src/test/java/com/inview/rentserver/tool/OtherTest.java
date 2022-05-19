@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -28,7 +29,11 @@ public class OtherTest {
         RentalRecord rr = new RentalRecord();
         IClassName<BigDecimal> fun = rr::setDeposit;
         System.out.println(fun.getImplMethodName());
-        System.out.println(fun.getSerializedLambda().getInstantiatedMethodType());
+
+        List<Class<?>> classList = fun.getParameterTypes();
+        classList.forEach(System.out::println);
+
+        System.out.println(fun.getReturnType());
     }
 
     @Test

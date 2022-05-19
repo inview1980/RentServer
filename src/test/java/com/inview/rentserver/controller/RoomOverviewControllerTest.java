@@ -112,4 +112,9 @@ class RoomOverviewControllerTest {
         assertNotNull(rtt);
         rtt.forEach(System.out::println);
     }
+
+    @Test
+    void getContractByRoomID() {
+        query("getContractByRoomID","roomID", new String[]{"2"});
+    }
 }
