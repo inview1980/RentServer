@@ -10,10 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 /**
- * @author zhoushun
- * @ClassName: SpringBeanUtil
- * @Description: TODO(spring功能类 ， 用于获取bean)
- * @date 2012-11-27 下午04:22:36
+ * spring功能类 ， 用于获取bean
  */
 @Component("springBeanUtil")
 @Slf4j

@@ -12,6 +12,7 @@ import person.inview.tools.StrUtil;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 /**
@@ -37,16 +38,18 @@ public abstract class ReceiveListenerBase<T extends IPrimaryID> {
         if (l != 0) {
             log.info("数据库[{}]已修改", clazz.getSimpleName());
             //如果操作字符串如：changeRentRecord，执行修改或增加相应数据库操作，操作字符串不分大小写
-            if(receiver.getOpcode().equalsIgnoreCase("change"+clazz.getSimpleName())){
-                Map map = JSONObject.parseObject(receiver.getData(), Map.class);
-                return updateOrAddPojo(map.get(clazz.getSimpleName()).toString());
+            switch (Optional.ofNullable(receiver.getOpcode()).orElse("")) {
+                case "changeDB":
+                    Map map = JSONObject.parseObject(receiver.getData(), Map.class);
+                    if (map.containsKey(clazz.getSimpleName()))
+                        return updateOrAddPojo(map.get(clazz.getSimpleName()).toString());
+                    break;
+                case "delete":
+                    int id = Integer.getInteger(receiver.getData(), 0);
+                    return deleteByID(id);
+                default:
+                    return notice(receiver);
             }
-            //如果操作字符串如：deleteRentRecord，执行删除相应数据库操作，操作字符串不分大小写
-            if (receiver.getOpcode().equalsIgnoreCase("delete" + clazz.getSimpleName())) {
-                int id = Integer.getInteger(receiver.getData(), 0);
-                return deleteByID(id);
-            }
-            return notice(receiver);
         }
         return true;
     }

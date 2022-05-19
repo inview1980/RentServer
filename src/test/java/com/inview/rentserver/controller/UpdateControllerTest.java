@@ -1,6 +1,7 @@
 package com.inview.rentserver.controller;
 
 import com.alibaba.fastjson.JSON;
+import com.inview.rentserver.dao.RentalRecordDao;
 import com.inview.rentserver.dao.RoomDao;
 import com.inview.rentserver.pojo.DataEnum;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,6 +18,7 @@ import org.springframework.web.context.WebApplicationContext;
 import person.inview.receiver.Receiver;
 import person.inview.tools.RandomUtil;
 import person.inview.tools.StringCompress;
+import pojo.RentalRecord;
 import pojo.RoomDetails;
 import uk.co.jemos.podam.api.PodamFactory;
 import uk.co.jemos.podam.api.PodamFactoryImpl;
@@ -31,6 +33,8 @@ class UpdateControllerTest {
     WebApplicationContext webApplicationContext;
     @Autowired
     RoomDao roomDao;
+    @Autowired
+    RentalRecordDao rentDao;
 
     @BeforeEach
     public void init() {
@@ -68,32 +72,67 @@ class UpdateControllerTest {
     }
 
     @Test
-    void roomUpdate(){
+    void roomUpdate() {
         PodamFactory factory = new PodamFactoryImpl();
         Receiver re = factory.manufacturePojo(Receiver.class);
-        re.setDataCode(DataEnum.RoomDetails.getCode());
-        re.setOpcode("changeRoomDetails");
+        re.setDataCode(DataEnum.RoomDetails.getCode() | DataEnum.RentRecord.getCode());//同时修改RoomDetails\RentRecord
+        re.setOpcode("changeDB");
+        //载入room
         RoomDetails room = factory.manufacturePojo(RoomDetails.class);
         room.setPrimary_id(2);
         Map map = new HashMap();
         map.put(RoomDetails.class.getSimpleName(), room);
+        //载入rent
+        RentalRecord record = factory.manufacturePojo(RentalRecord.class);
+        record.setPrimary_id(2);
+        map.put(RentalRecord.class.getSimpleName(), record);
+
         re.setData(JSON.toJSONString(map));
-        query("/updateOrAdd",JSON.toJSONString(re));
+        query("/updateOrAdd", JSON.toJSONString(re));
         System.out.println(roomDao.findByID(2));
+        System.out.println(rentDao.findByID(2));
     }
 
     @Test
-    void DBBackup(){
+    void changeRoomDeposit() {
+        PodamFactory factory = new PodamFactoryImpl();
+        Receiver re = factory.manufacturePojo(Receiver.class);
+        re.setDataCode(DataEnum.RentRecord.getCode());//同时修改RoomDetails\RentRecord
+        re.setOpcode("changeRoomDeposit");
+        Map<String, String> map = new HashMap<>();
+        map.put("recordID", "2");
+        map.put("value", "11");
+        re.setData(JSON.toJSONString(map));
+        query("/updateOrAdd", JSON.toJSONString(re));
+        System.out.println(rentDao.findByID(2));
+    }
+
+    @Test
+    void changeMonthlyRent() {
+        PodamFactory factory = new PodamFactoryImpl();
+        Receiver re = factory.manufacturePojo(Receiver.class);
+        re.setDataCode(DataEnum.RentRecord.getCode());//修改RentRecord
+        re.setOpcode("changeMonthlyRent");
+        Map<String, String> map = new HashMap<>();
+        map.put("recordID", "2");
+        map.put("value", "111");
+        re.setData(JSON.toJSONString(map));
+        query("/updateOrAdd", JSON.toJSONString(re));
+        System.out.println(rentDao.findByID(2));
+    }
+
+    @Test
+    void DBBackup() {
         try {
             //groupManager访问路径
             //param传入参数
-                System.out.println("--------------------------------------------------------");
-                MvcResult result = mock.perform(MockMvcRequestBuilders.get("/DBBackup" )).andReturn();
-                MockHttpServletResponse response = result.getResponse();
-                String content = response.getContentAsString();
-                System.out.println("/DBBackup");
-                System.out.println(content);
-                System.out.println("--------------------------------------------------------");
+            System.out.println("--------------------------------------------------------");
+            MvcResult result = mock.perform(MockMvcRequestBuilders.get("/DBBackup")).andReturn();
+            MockHttpServletResponse response = result.getResponse();
+            String content = response.getContentAsString();
+            System.out.println("/DBBackup");
+            System.out.println(content);
+            System.out.println("--------------------------------------------------------");
         } catch (Exception e) {
             e.printStackTrace();
         }
